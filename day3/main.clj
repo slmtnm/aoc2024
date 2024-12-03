@@ -21,8 +21,9 @@
      execute)
 
 ; Second task of Day 3
-(->> (slurp "input.txt")
-     ((comp str/split-lines str/join))     ; remove newlines from code
-     ((fn [s] (str/replace s dontpat ""))) ; remove don't()...do() blocks
-     execute)
+(-> (slurp "input.txt")
+    str/split-lines
+    str/join
+    (str/replace dontpat "")
+    execute)
 
