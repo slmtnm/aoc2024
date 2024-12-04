@@ -25,14 +25,10 @@
   "Creates 8 points arrays of length 4,
    for each direction (2 for verical, 4 for diagonal, 2 for horizontal)"
   [[x y]]
-  [[[x y] [(+ x 1) y] [(+ x 2) y] [(+ x 3) y]]
-   [[x y] [(- x 1) y] [(- x 2) y] [(- x 3) y]]
-   [[x y] [x (+ y 1)] [x (+ y 2)] [x (+ y 3)]]
-   [[x y] [x (- y 1)] [x (- y 2)] [x (- y 3)]]
-   [[x y] [(- x 1) (- y 1)] [(- x 2) (- y 2)] [(- x 3) (- y 3)]]
-   [[x y] [(- x 1) (+ y 1)] [(- x 2) (+ y 2)] [(- x 3) (+ y 3)]]
-   [[x y] [(+ x 1) (- y 1)] [(+ x 2) (- y 2)] [(+ x 3) (- y 3)]]
-   [[x y] [(+ x 1) (+ y 1)] [(+ x 2) (+ y 2)] [(+ x 3) (+ y 3)]]])
+  (let [deltas [[1 0] [-1 0] [0 1] [0 -1] [-1 -1] [-1 1] [1 -1] [1 1]]]
+    (for [delta deltas]
+      (for [step (range 4)]
+        [(+ x (* step (delta 0))) (+ y (* step (delta 1)))]))))
 
 (defn count-xmas
   "Counts number of XMAS words in given matrix"
