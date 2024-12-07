@@ -1,6 +1,7 @@
 (require '[clojure.string :as str])
 
 (defn read-input
+  "Reads input to [[target1 numbers1] [target2 numbers2] ...]"
   [filename]
   (->> (slurp filename)
        str/split-lines
@@ -10,33 +11,39 @@
                      (mapv parse-long (str/split (second %) #" "))))))
 
 (defn can-be-combined?
-  [test values total]
+  [target values current]
   (if (empty? values)
-    (= total test)
-    (or (can-be-combined? test (rest values) (* total (first values)))
-        (can-be-combined? test (rest values) (+ total (first values))))))
+    (= current target)
+    (let [v (first values)]
+      (and (<= current target)
+           (or (can-be-combined? target (rest values) (* current v))
+               (can-be-combined? target (rest values) (+ current v)))))))
 
 (defn concat-longs [a b] (parse-long (str a b)))
+
 (defn can-be-combined-concat?
-  [test values total]
+  [target values current]
   (if (empty? values)
-    (= total test)
-    (or (can-be-combined-concat? test (rest values) (* total (first values)))
-        (can-be-combined-concat? test (rest values) (+ total (first values)))
-        (can-be-combined-concat? test
-                                 (rest values)
-                                 (concat-longs total (first values))))))
+    (= current target)
+    (let [v (first values)]
+      (and (<= current target)
+           (or (can-be-combined-concat? target (rest values) (* current v))
+               (can-be-combined-concat? target (rest values) (+ current v))
+               (can-be-combined-concat? target
+                                        (rest values)
+                                        (concat-longs current v)))))))
 
-
+; First part
 (->> (read-input "input.txt")
-     (filter #(can-be-combined? (first %) (rest (second %)) (first (second %))))
+     (filter (fn [[target values]]
+               (can-be-combined? target (rest values) (first values))))
      (map first)
      (apply +))
 
+; Second part
 (->> (read-input "input.txt")
-     (filter #(can-be-combined-concat? (first %)
-                                       (rest (second %))
-                                       (first (second %))))
+     (filter (fn [[target values]]
+               (can-be-combined-concat? target (rest values) (first values))))
      (map first)
      (apply +))
 
